@@ -1,6 +1,9 @@
 import unittest
+from unittest.mock import patch
+import requests
 
 from recordsummary.models import TVShow
+from recordsummary.sources import TVShowSource
 
 
 class TestTVShow(unittest.TestCase):
@@ -43,6 +46,16 @@ class TestTVShow(unittest.TestCase):
         show = TVShow(data)
 
         self.assertEqual(show.genres, set())
+
+    def test_download_failure(self):
+        source = TVShowSource("https://example.com")
+
+        with patch(
+            "recordsummary.sources.requests.get",
+            side_effect=requests.exceptions.ConnectionError()
+        ):
+            with self.assertRaises(ConnectionError):
+                source.fetch()
 
 
 if __name__ == "__main__":
