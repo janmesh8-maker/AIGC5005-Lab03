@@ -1,3 +1,6 @@
+from dbm import error
+from urllib import response
+
 import requests
 from .models import TVShow
 
@@ -12,8 +15,15 @@ class TVShowSource:
         self.malformed_records_skipped = 0
 
     def fetch(self):
-        response = requests.get(self.url, timeout=self.timeout)
-        response.raise_for_status()
+        try:
+            response = requests.get(self.url, timeout=self.timeout)
+            response.raise_for_status()
+
+        except requests.exceptions.RequestException as error:
+            raise ConnectionError(
+        "Download failed. Check your internet connection "
+        "and whether the TVmaze API is available."
+    ) from error
 
         data = response.json()
 

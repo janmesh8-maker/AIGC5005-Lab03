@@ -1,4 +1,4 @@
-import requests
+
 
 from recordsummary.config import SOURCE_URL, TIMEOUT, OUTPUT
 from recordsummary.sources import TVShowSource
@@ -13,11 +13,8 @@ def main():
     try:
         shows = source.fetch()
 
-    except requests.exceptions.RequestException:
-        print(
-            "Download failed. Check your internet connection "
-            "and whether the TVmaze API is available."
-        )
+    except ConnectionError as error:
+        print(error)
         return 1
 
     except ValueError as error:
